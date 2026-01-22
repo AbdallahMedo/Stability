@@ -10,11 +10,12 @@ try {
 } catch (e) {
   console.log('serviceAccountKey.json not found, checking environment variables...');
   if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    try {
-      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-      console.log('Successfully loaded service account from environment variable.');
-    } catch (parseError) {
-      console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT environment variable:', parseError);
+      try {
+        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        console.log('Successfully loaded service account from environment variable.');
+      } catch (parseError) {
+        console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT environment variable:', parseError);
+      }
     }
   }
 }
@@ -31,12 +32,14 @@ if (!admin.apps.length) {
 }
 
 const getDb = () => {
-  if (admin.apps.length) return admin.firestore();
+  if (admin.apps.length && serviceAccount) return admin.firestore();
+  console.warn("Using mock DB because Firebase app is not initialized properly.");
   return {
     collection: () => ({
       doc: () => ({ set: async () => console.log('Mock DB set'), delete: async () => console.log('Mock DB delete'), update: async () => console.log('Mock DB update') }),
       add: async () => console.log('Mock DB add'),
-      get: async () => ({ empty: true, forEach: () => {} })
+      get: async () => ({ empty: true, forEach: () => {} }),
+      where: () => ({ get: async () => ({ empty: true, forEach: () => {} }) }) // Added mock 'where'
     })
   };
 };
