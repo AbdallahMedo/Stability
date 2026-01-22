@@ -10,14 +10,21 @@ try {
 } catch (e) {
   console.log('serviceAccountKey.json not found, checking environment variables...');
   if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    console.log('Found FIREBASE_SERVICE_ACCOUNT env var, attempting to parse...');
+    // Log first few chars to verify it's not empty/malformed without exposing secrets
+    console.log(`Env var content starts with: ${process.env.FIREBASE_SERVICE_ACCOUNT.substring(0, 20)}...`);
+    
     try {
       serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
       console.log('Successfully loaded service account from environment variable.');
     } catch (parseError) {
       console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT environment variable:', parseError);
     }
+  } else {
+    console.warn('FIREBASE_SERVICE_ACCOUNT env var is missing or empty.');
   }
 }
+
 
 if (!admin.apps.length) {
   if (serviceAccount) {
