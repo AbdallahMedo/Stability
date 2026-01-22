@@ -10,12 +10,11 @@ try {
 } catch (e) {
   console.log('serviceAccountKey.json not found, checking environment variables...');
   if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-      try {
-        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-        console.log('Successfully loaded service account from environment variable.');
-      } catch (parseError) {
-        console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT environment variable:', parseError);
-      }
+    try {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+      console.log('Successfully loaded service account from environment variable.');
+    } catch (parseError) {
+      console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT environment variable:', parseError);
     }
   }
 }
